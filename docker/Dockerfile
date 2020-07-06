@@ -1,7 +1,7 @@
 ###############################################################################
 # Step 1 : Builder image
 #
-FROM node:9-alpine AS builder
+FROM node:10-alpine AS builder
 
 # Define working directory and copy source
 WORKDIR /home/node/app
@@ -32,7 +32,7 @@ CMD ["npm", "test"]
 ###############################################################################
 # Step 3 : Run image
 #
-FROM node:9-alpine
+FROM node:10-alpine
 ENV NODE_ENV=production
 WORKDIR /home/node/app
 
