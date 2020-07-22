@@ -4,28 +4,42 @@
 ###   Binaries   ###
 ####################
 DOCKER_COMPOSE=$(which docker-compose)
+DOCKER=$(which docker)
 ####################
 
-export PROJECT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+PROJECT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+APP_NAME=$(./scripts/app_name.sh)
 
 echo "[$(date +"%Y-%m-%d %T")] Stopping containers..."
 
 #while read line; do export "$line";
 #done < <(cat ${PROJECT_PATH}/.env | grep -v "#" | grep -v "^$")
+
 export USER_ID=${UID}
 export GROUP_ID=${UID}
 
-${DOCKER_COMPOSE} \
-    -f ${PROJECT_PATH}/docker-compose.yml \
-    down --remove-orphans    
+# ${DOCKER_COMPOSE} \
+#     -f ${PROJECT_PATH}/docker-compose.yml \
+#     down --remove-orphans    
+
+docker build -f ./docker/develop/Dockerfile --tag ${APP_NAME}:dev .
 
 echo "[$(date +"%Y-%m-%d %T")] Starting the containers..."
 
-${DOCKER_COMPOSE} \
-    -f ${PROJECT_PATH}/docker-compose.yml \
-    up -d --build 
+docker run \
+    -it \
+    --rm \
+    -v ${PROJECT_PATH}:/app \
+    -v /app/node_modules \
+    -p 3001:3000 \
+    -e CHOKIDAR_USEPOLLING=true \
+    ${APP_NAME}:dev
 
-${DOCKER_COMPOSE} \
-    -f ${PROJECT_PATH}/docker-compose.yml \
-    logs -f --tail 40    
+# ${DOCKER_COMPOSE} \
+#     -f ${PROJECT_PATH}/docker-compose.yml \
+#     up -d --build 
+
+# ${DOCKER_COMPOSE} \
+#     -f ${PROJECT_PATH}/docker-compose.yml \
+#     logs -f --tail 40    
 
