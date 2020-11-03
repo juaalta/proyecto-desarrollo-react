@@ -29,5 +29,5 @@ docker run \
     -p 3001:3000 \
     -e CHOKIDAR_USEPOLLING=true \
     ${APP_NAME}:dev \
-    npm $1
+    npm $@
 
